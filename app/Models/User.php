@@ -14,28 +14,24 @@ class User extends Authenticatable
 
     protected $table = 'users';
     protected $primaryKey='id';
-}
 
-class User extends Model
-{
     public function project_user()
     {
-        return $this->belongsTo(Project_user::class);
+        return $this->belongsTo(ProjectUser::class);
     }
-}
 
-class User extends Model
-{
     public function task_user()
     {
-        return $this->belongsTo(Task_user::class);
+        return $this->belongsTo(TaskUser::class);
     }
-}
 
-class User extends Model
-{
     public function task()
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function comment()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

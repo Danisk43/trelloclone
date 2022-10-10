@@ -8,18 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     use HasFactory;
-}
 
-class Project extends Model
-{
     public function project_user()
     {
-        return $this->belongsTo(Project_user::class);
+        return $this->belongsTo(ProjectUser::class);
     }
-}
 
-class Project extends Model
-{
     public function task()
     {
         return $this->hasMany(Task::class);

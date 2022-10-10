@@ -8,10 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Status extends Model
 {
     use HasFactory;
-}
 
-class Status extends Model
-{
     public function task()
     {
         return $this->belongsTo(Task::class);
