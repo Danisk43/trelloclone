@@ -13,9 +13,11 @@ class CreateTaskUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('task_user', function (Blueprint $table) {
+        Schema::create('task_users', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('task_id')->constrained('tasks');
+            $table->timestamps();
+
         });
     }
 
@@ -26,6 +28,6 @@ class CreateTaskUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tast_user');
+        Schema::dropIfExists('task_user');
     }
 }

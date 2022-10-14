@@ -13,9 +13,11 @@ class CreateProjectUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('project_user', function (Blueprint $table) {
+        Schema::create('project_users', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('project_id')->constrained('projects');
+            $table->timestamps();
+
         });
     }
 

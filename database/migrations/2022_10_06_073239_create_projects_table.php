@@ -17,6 +17,8 @@ class CreateProjectsTable extends Migration
             $table->id('id');
             $table->string('name',20);
             $table->foreignId('owner_id')->constrained('users');
+            $table->timestamps();
+
         });
     }
 

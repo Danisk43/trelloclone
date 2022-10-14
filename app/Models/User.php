@@ -14,6 +14,7 @@ class User extends Authenticatable
 
     protected $table = 'users';
     protected $primaryKey='id';
+    // public $timestamps = false;
 
     public function project_user()
     {
@@ -25,13 +26,19 @@ class User extends Authenticatable
         return $this->belongsTo(TaskUser::class);
     }
 
-    public function task()
-    {
-        return $this->hasMany(Task::class);
-    }
-
     public function comment()
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function projects()
+    {
+        return $this->hasManyThrough(Project::class,ProjectUser::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasManyThrough(Task::class,TaskUser::class);
+    }
+
 }

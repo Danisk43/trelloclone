@@ -17,6 +17,7 @@ class CreateStatusesTable extends Migration
             $table->id('id');
             $table->string('type',50);
             $table->foreignId('project_id')->constrained('projects');
+            $table->timestamps();
         });
     }
 

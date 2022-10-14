@@ -18,4 +18,14 @@ class Project extends Model
     {
         return $this->hasMany(Task::class);
     }
+
+    public function status()
+    {
+        return $this->hasMany(Status::class);
+    }
+
+    public function users()
+    {
+        return $this->hasManyThrough(User::class,ProjectUser::class);
+    }
 }

@@ -14,19 +14,14 @@ class Task extends Model
         return $this->hasOne(Status::class);
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function project()
     {
         return $this->belongsTo(Project::class);
     }
 
-    public function task_user()
+    public function users()
     {
-        return $this->belongsTo(TaskUser::class);
+        return $this->hasManyThrough(User::class,TaskUser::class);
     }
 
     public function comment()
