@@ -4,39 +4,42 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use App\Models\Task;
+use App\Models\Project;
 use Validator;
 
 class TaskService
 {
-    function showAllTasks(){
-        return Task::all();
+    public function showAllTasks(){
+        return Task::users();
     }
 
-    function addTask($req)
+    public function addTask($req)
     {
-        $validator = Validator::make($req->all(), [
-            'title' => 'required|max:20',
-            'description' => 'required|max:100',
-            'status_id' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 401);
-        }
-        $task = new Task;
-        $task->title=$req->title;
-        $task->description=$req->description;
-        $task->status_id=$req->status_id;
-        $task->attachment=$req->attachment;
-        $task->user_id=$req->user_id;
-        $task->project_id=$req->project_id;
-        $task->save();
+        // $task = new Task;
+        // $task->title=$req->title;
+        // $task->description=$req->description;
+        // $task->status_id=$req->status_id;
+        // $task->attachment=$req->attachment;
+        // $task->user_id=$req->user_id;
+        // $task->project_id=$req->project_id;
+        // $task->save();
+
+        return $res = (new Task())->fill([
+            'title'=>$req->get('title'),
+            'description'=>$req->get('description'),
+            'status_id'=>$req->get('status_id'),
+            'attachment'=>$req->get('attachment'),
+            'user_id'=>Session::get('user_id'),
+            'project_id'=>$id,
+        ])->save();
     }
 
-    function showTask($project_id,$task_id){
-        return Task::find($task_id);
+    public function showTask($project_id,$task_id){
+        return Project::find($project_id)->task();
+
     }
 
-    function updateTask($req,$project_id,$task_id){
+    public function updateTask($req,$project_id,$task_id){
         $task=Task::find($task_id);
         if($req->has('title')){
             $task->title=$req->title;
@@ -59,7 +62,7 @@ class TaskService
         $task->save();
     }
 
-    function deleteTask($project_id,$task_id){
+    public function deleteTask($project_id,$task_id){
         $task=Task::find($task_id);
         $task->delete();
     }

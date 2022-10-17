@@ -8,15 +8,15 @@ use App\Services\ProjectUserService;
 
 class ProjectUserController extends Controller
 {
-    function showUsers($id){
+    public function showUsers($id){
         return ProjectUserService::showUsers($id);
     }
 
-    function addUser(Request $req,$id){
+    public function addUser(Request $req,$id){
         return ProjectUserService::addUser($req,$id);
     }
 
-    function deleteUser($project_id,$user_id){
+    public function deleteUser($project_id,$user_id){
         return ProjectUserService::deleteUser($project_id,$user_id);
     }
 }

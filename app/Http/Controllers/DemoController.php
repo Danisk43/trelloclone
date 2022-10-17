@@ -15,7 +15,7 @@ use App\Models\TaskUser;
 class DemoController extends Controller
 {
     //
-    function show(){
+    public function show(){
         return User::all();
     }
     

@@ -9,21 +9,21 @@ use Validator;
 
 class CommentService
 {
-    function showComments(){
-        return Comment::all();
+    public function showComments(){
+        return Comment::task();
     }
-    function addComment($req)
+    public function addComment($req,$task_id)
     {
-        $validator = Validator::make($req->all(), [
-            'description' => 'required|max:100',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 401);
-        }
-        $project = new Comment;
-        $project->description=$req->description;
-        $project->user_id=$req->user_id;
-        $project->task_id=$req->task_id;
-        $project->save();
+        // $project = new Comment;
+        // $project->description=$req->description;
+        // $project->user_id=$req->user_id;
+        // $project->task_id=$req->task_id;
+        // $project->save();
+
+        return $res = (new Comment())->fill([
+            'description'=>$req->get('description'),
+            'user_id'=>Session::get('user_id'),
+            'task_id'=>$task_id,
+        ])->save();
     }
 }

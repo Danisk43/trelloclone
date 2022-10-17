@@ -9,31 +9,34 @@ use Validator;
 
 class ProjectService
 {
-    function showAllProjects(){
-        return Project::all();
+    public function showAllProjects(){
+        return User::find(Session::get('user_id'))->projects();
     }
 
-    function addProject($req)
+    public function addProject($req)
     {
-        $validator = Validator::make($req->all(), [
-            'name' => 'required|max:20',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 401);
-        }
-        $project = new Project;
-        $project->name=$req->name;
-        $project->owner_id=$req->owner_id;
-        $project->save();
+        // $project = new Project;
+        // $project->name=$req->name;
+        // $project->owner_id=$req->owner_id;
+        // $project->save();
+
+        return $res = (new Project())->fill([
+            'name'=>$req->get('name'),
+            'owner_id'=>Session::get('user_id'),
+        ])->save();
     }
 
-    function showProject($id){
+    public function showProject($id){
         return Project::find($id);
     }
 
-    function updateProject($req,$id){
-        $project=Project::find($id);
-        $project->name=$req->name;
-        $project->save();
+    public function updateProject($req,$id){
+        // $project=Project::find($id);
+        // $project->name=$req->name;
+        // $project->save();
+
+        return $res = Project::find($id)->fill([
+            'name'=>$req->get('name'),
+        ])->save();
     }
 }

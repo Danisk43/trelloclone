@@ -19,12 +19,11 @@ class CreateTasksTable extends Migration
             $table->string('description',100);
             // $table->string('status',20);
             $table->string('attachment',20);
-            $table->unsignedBigInteger('status_id');
-            // $table->foreignId('status_id')->constrained('statuses');
+            // $table->unsignedBigInteger('status_id');
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('project_id')->constrained('projects');
+            $table->foreignId('status_id')->constrained('statuses');
             $table->timestamps();
-
         });
     }
 
