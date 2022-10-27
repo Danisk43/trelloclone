@@ -23,7 +23,11 @@ class ProjectController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 401);
         }
-       return ProjectService::addProject($req);
+       ProjectService::addProject($req);
+       return response()->json([
+        "status"=>200,
+        "message"=>"Project created successfully"
+       ]);
     }
 
     public function showProject($id){
@@ -31,6 +35,22 @@ class ProjectController extends Controller
     }
 
     public function updateProject(Request $req,$id){
-        ProjectService::updateProject($req,$id);
+        if(ProjectService::updateProject($req,$id)){
+
+            return response()->json([
+                "status"=>200,
+                "message"=>"Project updated successfully"
+            ]);
+        }
+    }
+
+    public function deleteProject($id){
+        if(ProjectService::deleteProject($id)){
+
+            return response()->json([
+                "status"=>200,
+                "message"=>"Project deleted successfully"
+            ]);
+        }
     }
 }

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\ProjectUser;
 use App\Models\Project;
 use Validator;
+use Illuminate\Support\Facades\Session;
+
 
 class ProjectUserService
 {

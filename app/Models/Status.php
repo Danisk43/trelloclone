@@ -13,4 +13,8 @@ class Status extends Model
     {
         return $this->belongsToMany(Task::class);
     }
+
+    public function project(){
+        return $this->hasOne(Project::class);
+    }
 }

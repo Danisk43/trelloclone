@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     use HasFactory;
+    protected $fillable = ['name', 'owner_id'];
 
     public function project_user()
     {
         return $this->belongsTo(ProjectUser::class);
     }
 
-    public function task()
+    public function tasks()
     {
         return $this->hasMany(Task::class);
     }
@@ -26,6 +27,6 @@ class Project extends Model
 
     public function users()
     {
-        return $this->hasManyThrough(User::class,ProjectUser::class);
+        return $this->belongsToMany(User::class,'project_users');
     }
 }

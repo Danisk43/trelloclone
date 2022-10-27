@@ -7,6 +7,8 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProjectUserController;
+use App\Http\Controllers\AuthController;
+
 
 
 
@@ -38,12 +40,8 @@ Route::get('/',function(){
 
 
 
-Route::post('login', function () {
-    return view('welcome');
-});
-Route::post('/register', function () {
-    return view('welcome');
-});
+Route::post('/register',[AuthController::class,'register']);
+Route::post('/login',[AuthController::class,'login'])->name('login.custom');
 
 
 
@@ -55,17 +53,17 @@ Route::prefix('project')->group(function () {
     
     Route::get('/{projectId}',[ProjectController::class,'showProject']);
     Route::patch('/{projectId}',[ProjectController::class,'updateProject']);
+    Route::delete('/{projectId}',[ProjectController::class,'deleteProject']);
     
     
-    
-    Route::get('/{projectId}/task',[TaskController::class,'showAllTasks']);
+    Route::post('/{projectId}/tasks',[TaskController::class,'showAllTasks']);
+    Route::post('/{projectId}/tasks-with-status',[TaskController::class,'showAllTasksWithStatus']);
     Route::post('/{projectId}/task',[TaskController::class,'addTask']);
-    
     
     
     Route::get('/{projectId}/task/{taskId}', [TaskController::class,'showTask']);
     Route::patch('/{projectId}/task/{taskId}',[TaskController::class,'updateTask']);
-    Route::delete('/{projectId}/task/{taskId}',[TaskController::class,'deleteTask']);
+    Route::delete('/task/{taskId}',[TaskController::class,'deleteTask']);
     
     
     
@@ -75,7 +73,7 @@ Route::prefix('project')->group(function () {
     
     
     
-    Route::get('/{projectId}/task/{taskId}/comment', [CommentController::class,'showComments']);
-    Route::post('/{projectId}/task/{taskId}/comment',[CommentController::class,'addComment']);
+    Route::get('/task/{taskId}/comment', [CommentController::class,'showComments']);
+    Route::post('/task/{taskId}/comment',[CommentController::class,'addComment']);
     
 });

@@ -7,13 +7,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+
+
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
-
+    protected $fillable = ['first_name', 'last_name', 'email','password'];
     protected $table = 'users';
     protected $primaryKey='id';
+    protected $attributes = [
+        'is_verified' => 0,
+    ];
     // public $timestamps = false;
 
     public function project_user()
@@ -33,12 +39,12 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->hasManyThrough(Project::class,ProjectUser::class);
+        return $this->belongsToMany(Project::class,'project_users');
     }
 
     public function tasks()
     {
-        return $this->hasManyThrough(Task::class,TaskUser::class);
+        return $this->belongsToMany(Task::class,'task_users');
     }
 
 }

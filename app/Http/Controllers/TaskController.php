@@ -10,8 +10,12 @@ use Validator;
 
 class TaskController extends Controller
 {
-    public function showAllTasks(){
-        return TaskService::showAllTasks();
+    public function showAllTasks(Request $id){
+        return TaskService::showAllTasks($id);
+    }
+
+    public function showAllTasksWithStatus($id){
+        return TaskService::showAllTasksWithStatus($id);
     }
 
     public function addTask(Request $req,$id)
@@ -35,8 +39,12 @@ class TaskController extends Controller
         TaskService::updateTask($req,$project_id,$task_id);
     }
 
-    public function deleteTask($project_id,$task_id){
-        TaskService::deleteTask($project_id,$task_id);
+    public function deleteTask($task_id){
+        TaskService::deleteTask($task_id);
+        return response()->json([
+            "status"=>200,
+            "message"=>"Project deleted successfully"
+        ]);
     }
     
 }

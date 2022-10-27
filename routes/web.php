@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
+use App\Http\Controllers\AuthController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,19 +13,16 @@ use App\Models\User;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+*/                  
+Route::get('/',function(){
+    return view('welcome');
+});
 
+Route::get('/register',[AuthController::class,'registerView']);
+Route::get('login',[AuthController::class,'loginView']);
 
+Route::get('/verify',[AuthController::class,'verify']);
 
-
-
-
-
-
-
-
-
-
-
-
-
+Route::get('/test',function(){
+    return view('project-dashboard/project');
+});

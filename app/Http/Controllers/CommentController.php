@@ -11,10 +11,10 @@ use Validator;
 
 class CommentController extends Controller
 {
-    public function showComments(){
-        return CommentService::showComments();
+    public function showComments($id){
+       return CommentService::showComments($id); 
     }
-    public function addComment(Request $req,$project_id,$task_id)
+    public function addComment(Request $req,$task_id)
     {
         $validator = Validator::make($req->all(), [
             'description' => 'required|max:100',
@@ -22,6 +22,11 @@ class CommentController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 401);
         }
-        return CommentService::addComment($req,$task_id);
+        CommentService::addComment($req,$task_id);
+        
+        return response()->json([
+            "status"=>200,
+            "message"=>"Comment added successfully"
+        ]);
     }
 }
