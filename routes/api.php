@@ -7,6 +7,8 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProjectUserController;
+use App\Http\Controllers\TaskUserController;
+
 use App\Http\Controllers\AuthController;
 
 
@@ -40,13 +42,12 @@ Route::get('/',function(){
 
 
 
-Route::post('/register',[AuthController::class,'register']);
-Route::post('/login',[AuthController::class,'login'])->name('login.custom');
+
+
 
 
 
 Route::prefix('project')->group(function () {
-    Route::get('/',[ProjectController::class,'showAllProjects']);
     Route::post('/',[ProjectController::class,'addProject']);
     
     
@@ -67,9 +68,9 @@ Route::prefix('project')->group(function () {
     
     
     
-    Route::get('/{projectId}/user',[ProjectUserController::class,'showUsers']);
-    Route::post('/{projectId}/user',[ProjectUserController::class,'addUser']);
-    Route::delete('/{projectId}/user/{userId}',[ProjectUserController::class,'deleteUser']);
+    Route::get('/task/{taskId}/user',[TaskUserController::class,'showUsers']);
+    Route::get('/task/{taskId}/user/{userId}',[TaskUserController::class,'addUser']);
+    Route::delete('task/{taskId}/user/{userId}',[TaskUserController::class,'removeUser']);
     
     
     

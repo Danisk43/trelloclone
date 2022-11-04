@@ -61,7 +61,15 @@ class TaskService
     }
 
     public function showTask($project_id,$task_id){
-        return Project::find($project_id)->task();
+        $task=Task::find($task_id);
+        // echo $task;
+        $users=$task->users;
+        // echo $users;
+        return response()->json([
+            "task"=>$task,
+            // "users"=>$users
+        ]);
+
 
     }
 

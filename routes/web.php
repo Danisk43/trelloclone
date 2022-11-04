@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProjectController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +23,24 @@ Route::get('/',function(){
 Route::get('/register',[AuthController::class,'registerView']);
 Route::get('login',[AuthController::class,'loginView']);
 
+Route::post('/register',[AuthController::class,'register']);
+Route::post('/login',[AuthController::class,'login'])->name('login.custom');
+
+Route::post('/forgot-password',[AuthController::class,'forgotPassword']);
+Route::post('/change-password',[AuthController::class,'changePassword']);
+
+Route::get('/logout',[AuthController::class,'logout']);
+
+
+
+Route::get('forgot-password',[AuthController::class,'forgotPasswordView']);
+Route::get('change-password/{token}',[AuthController::class,'changePasswordView'])->name('changePassword');
+
+
 Route::get('/verify',[AuthController::class,'verify']);
 
-Route::get('/test',function(){
+Route::get('/dashboard',function(){
     return view('project-dashboard/project');
 });
+
+Route::get('/project',[ProjectController::class,'showAllProjects']);

@@ -11,10 +11,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
 
-    <title>TrelloClone</title>
+    <title>Taskit</title>
 </head>
 
 <body>
+<a href="/logout"> <button class="upper-btn btn btn-success form-control" style="width:100px;">Logout</button></a>
+
     <div class="container ms-0">
         <div class="row">
             <div class="column">
@@ -174,7 +176,7 @@
                 // console.log("hello")
                 $.ajax({
                     type: "GET",
-                    url: "/api/project",
+                    url: "/project",
                     dataType: "json",
                     success: function (response) {
                         // console.log(response.projects);
@@ -369,7 +371,7 @@
                             <h6>'+item.title+'</h6>\
                             <p>'+item.description+'</p>\
                             </div>\
-                            <button class="btn btn-primary btn-sm view_task view_task" value="'+item.id+'" data-title="'+item.title+'" data-description="'+item.description+'" data-attachment="'+item.attachment+'" data-users="'+item.users+'">View</button>\
+                            <button class="btn btn-primary btn-sm view_task view_task" value="'+item.id+'" data-project="'+project_id+'">View</button>\
                             <button class="btn btn-danger btn-sm delete_task" value="'+item.id+'">Delete</button>\
                     </div>');
                         });
@@ -382,11 +384,43 @@
             $(document).on('click','.view_task', function (e) {
                 e.preventDefault();
                 var task_id=$(this).val();
-                var task_title=$(this).data('title');
-                var task_description=$(this).data('description');
-                var task_attachment=$(this).data('attachment');
-                var task_users=$(this).data('users');
-                console.log(task_users);
+                var project_id=$(this).data('project');
+                $.ajax({
+                    type: "GET",
+                    url: "/api/project/"+project_id+"/task/"+task_id,
+                    dataType: "json",
+                    success: function (response) {
+                        // console.log(response);
+                        $('#TaskModalLabel').html(response.task.title);
+                        $('.task-modal-body').html(`<h5>${response.task.description}</h5>
+                        <br>
+                        <br>
+                        <h6>Attachments<h6>
+                        <p>${response.task.attachment}</p>
+                        <br>
+                        <p class="assigned-users">Assigned Users</p>
+
+                        <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle add-users-on-task" data-task="${response.task.id}" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            Add New User
+                        </button>
+                        <ul class="dropdown-menu users-list" aria-labelledby="dropdownMenuButton1">
+                        </ul>
+                        </div>
+
+                        `)
+
+
+
+                        var task_id=response.task.id;
+                        $.each(response.task.users, function (key, item) { 
+                            $('.task-modal-body').append(`<div class=${item.id}user><p >${item.first_name}</p>
+                            <button class="btn btn-danger btn-sm remove_user_from_task" value=${item.id}>Remove User</button></div>`)
+                        });
+                        $('.remove_user_from_task').data('task',`${task_id}user`);
+                        
+                    }
+                });
                 $.ajax({
                     type: "GET",
                     url: "/api/project/task/"+task_id+"/comment",
@@ -396,21 +430,13 @@
                         $('.comments').append(`
                         <p>${item.description}</p>
                         <p>by ${item.first_name}</p>
+                        <p>${item.created_at}</p>
                         `)
                         });
                     }
                 });
 
-                $('#TaskModalLabel').html(task_title);
-                $('.task-modal-body').html(`<h5>${task_description}</h5>
-                <br>
-                <br>
-                <h6>Attachments<h6>
-                <p>${task_attachment}</p>
-                <br>
-                <p class="assigned-users">Assigned Users</p>
-                `
-                );
+                
 
                 // $.each(response.projects, function (key, item) { 
                     
@@ -445,6 +471,7 @@
                     success: function (response) {
                         $('.comments').append(`
                         <p>${value}</p>
+                        <p>
                         `)
                         $('#comment-value').val("");
                     }
@@ -452,9 +479,61 @@
 
             });
 
+            $(document).on('click',".remove_user_from_task", function (e) {
+                        e.preventDefault();
+                        var user_id=$(this).val()
+                        var task_id=$(this).data('task')
+                        $.ajax({
+                            type: "DELETE",
+                            url: `/api/project/task/${task_id}/user/${user_id}`,
+                            dataType: "json",
+                            success: function (response) {
+                                $(`.${user_id}user`).remove()
+                            }
+                        });
+                
+            });
 
+            $(document).on('click','.add-users-on-task', function (e) {
+                e.preventDefault();
+                var task_id=$(this).data('task');
+                $.ajax({
+                    type: "GET",
+                    url: `/api/project/task/${task_id}/user`,
+                    dataType: "json",
+                    success: function (response) {
+                        $.each(response.users, function (key, item) { 
+                             $('.users-list').append(`
+                             <li><a class="dropdown-item action-add-user" data-task=${task_id} data-userid=${item.id} data-username=${item.first_name}>${item.first_name}</a></li>
+                             `)
+                        });
+                    }
+                });
+                
+            });
 
+            $(document).on('click','.action-add-user', function (e) {
+                e.preventDefault();
+                var task_id=$(this).data('task')
+                var username=$(this).data('username')
+                var userid=$(this).data('userid')
 
+                
+
+                $.ajax({
+                    type: "GET",
+                    url: `/api/project/task/${task_id}/user/${userid}`,
+                    dataType: "json",
+                    success: function (response) {
+                        $('.task-modal-body').append(`<div class=${userid}user><p >${username}</p>
+                            <button class="btn btn-danger btn-sm remove_user_from_task" value=${userid}>Remove User</button></div>`)
+                    }
+                });
+                
+            });
+
+            
+            
         });
     </script>
 

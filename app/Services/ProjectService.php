@@ -17,9 +17,13 @@ class ProjectService
         // dd( User::find(1)->projects());
         // $project=[User::class,'projects'];
         // dd($project);
-        $projects = User::find(7);	
+        // $projects = User::find();
+        // dd(session()->all());
+        $projects = User::find(Session::get('user_id'));
+
         // $projects=$projects->projects->pluck('name');
         $projects=$projects->projects;
+        // dd($projects);
 
         return response()->json([
             "projects"=>$projects,
@@ -32,6 +36,12 @@ class ProjectService
             'name'=>$req->get('name'),
             // 'owner_id'=>Session::get('user_id'),
             'owner_id'=>'1',
+        ])->save();
+        $project_id=Project::where('name',$req->get('name'));
+        echo $project_id;
+        $new=(new ProjectUser())->fill([
+            'project_id'=>$project_id,
+            'user_id'=>'1'
         ])->save();
     }
 
