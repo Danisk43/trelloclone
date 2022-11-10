@@ -39,8 +39,7 @@ Route::get('change-password/{token}',[AuthController::class,'changePasswordView'
 
 Route::get('/verify',[AuthController::class,'verify']);
 
-Route::get('/dashboard',function(){
-    return view('project-dashboard/project');
-});
+Route::get('/dashboard',[AuthController::class,'dashboardView']);
 
 Route::get('/project',[ProjectController::class,'showAllProjects']);
+Route::post('/project',[ProjectController::class,'addProject']);

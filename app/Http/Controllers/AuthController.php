@@ -123,4 +123,11 @@ class AuthController extends Controller
         session()->flush();
         return redirect('login');
     }
+
+    public function dashboardView(){
+        if(Auth::check()){
+            return view('project-dashboard/project');
+        }
+        return redirect("login")->withSuccess('Please login first');
+    }
 }

@@ -48,7 +48,6 @@ Route::get('/',function(){
 
 
 Route::prefix('project')->group(function () {
-    Route::post('/',[ProjectController::class,'addProject']);
     
     
     

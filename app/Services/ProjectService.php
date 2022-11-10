@@ -5,6 +5,8 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\User;
+use App\Models\ProjectUser;
+
 use Validator;
 use Illuminate\Support\Facades\Session;
 
@@ -32,16 +34,19 @@ class ProjectService
 
     public function addProject($req)
     {
+        // dd(Session::all());
+        $user_id=Session::get('user_id');
         $res = (new Project())->fill([
             'name'=>$req->get('name'),
-            // 'owner_id'=>Session::get('user_id'),
-            'owner_id'=>'1',
+            'owner_id'=>$user_id,
+            // 'owner_id'=>'1',
         ])->save();
-        $project_id=Project::where('name',$req->get('name'));
-        echo $project_id;
+        $project_id=Project::where('name',$req->get('name'))->first();
+        // echo $project_id;
         $new=(new ProjectUser())->fill([
-            'project_id'=>$project_id,
-            'user_id'=>'1'
+            'project_id'=>$project_id->id,
+            // 'user_id'=>'1'
+            'user_id'=>$user_id,
         ])->save();
     }
 
@@ -61,6 +66,12 @@ class ProjectService
     }
 
     public function deleteProject($id){
-        Project::find($id)->delete();
+        if(Project::find($id)->delete()){
+            return true;
+        }
+        else{
+            return false;
+        }
+
     }
 }

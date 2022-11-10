@@ -17,6 +17,7 @@ class ProjectController extends Controller
 
     public function addProject(Request $req)
     {
+        // dd($req);
         $validator = Validator::make($req->all(), [
             'name' => 'required|max:20',
         ]);
@@ -24,9 +25,12 @@ class ProjectController extends Controller
             return response()->json($validator->errors(), 401);
         }
        ProjectService::addProject($req);
+       $id=Project::where('name',$req->get('name'))->first();
        return response()->json([
         "status"=>200,
-        "message"=>"Project created successfully"
+        "message"=>"Project created successfully",
+        "id"=>$id->id,
+        "name"=>$id->name,
        ]);
     }
 
@@ -46,10 +50,9 @@ class ProjectController extends Controller
 
     public function deleteProject($id){
         if(ProjectService::deleteProject($id)){
-
             return response()->json([
                 "status"=>200,
-                "message"=>"Project deleted successfully"
+                "message"=>"Project deleted successfully",
             ]);
         }
     }
