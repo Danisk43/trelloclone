@@ -74,6 +74,5 @@ Route::prefix('project')->group(function () {
     
     
     Route::get('/task/{taskId}/comment', [CommentController::class,'showComments']);
-    Route::post('/task/{taskId}/comment',[CommentController::class,'addComment']);
     
 });

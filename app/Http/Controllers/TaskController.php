@@ -40,10 +40,11 @@ class TaskController extends Controller
     }
 
     public function deleteTask($task_id){
-        TaskService::deleteTask($task_id);
+        $statusId=TaskService::deleteTask($task_id);
         return response()->json([
             "status"=>200,
-            "message"=>"Project deleted successfully"
+            "message"=>"Project deleted successfully",
+            "statusId"=>$statusId
         ]);
     }
     

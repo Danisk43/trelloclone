@@ -25,9 +25,9 @@ class TaskService
 
     public function showAllTasksWithStatus($id){
         $status_ids= Status::where('project_id',$id)->get();
-
+        // echo $status_ids;
         foreach($status_ids as &$s){
-            $s->tasks=Task::where('status_id',$s->id)->get();
+            $s->tasks=Task::where('status_id',$s->id)->where('project_id',$id)->get();
             // foreach($s->tasks as &$t){
                 // echo $t;
                 // $users=Task::find($t->id);
@@ -98,7 +98,14 @@ class TaskService
 
     public function deleteTask($task_id){
         $task=Task::find($task_id);
+        $statusId=$task->status_id;
+        $projectId=$task->project_id;
         $task->delete();
+        $numberOfTask=Task::where('status_id',$statusId)->where('project_id',$projectId)->get();
+        // echo $numberOfTask;
+        if(count($numberOfTask)==0){
+            return $statusId;
+        }
     }
     
 }

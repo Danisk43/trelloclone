@@ -21,8 +21,9 @@ body{
     margin-top: 56px;
   }
 
-  .modal-dialog{
+  .modal-content{
     background-image: linear-gradient(#b5e5cd,#98dbd2);
+    /* padding:10px; */
   }
 
   .green-task{
@@ -31,6 +32,7 @@ body{
     width: 100%;
     margin-top: 56px;
     margin-left:280px;
+    height: 93.3vh;
   }
 
   .task-hover{
@@ -47,8 +49,30 @@ body{
   .task-card{
     /* border: 1px solid green; */
     background-color: #ebffdd;
+    /* background-color: white; */
+    /* border:1px solid; */
+    box-shadow:1px 1px 1px 1px green;
   }
 
   .task-card p{
     font-size:smaller;
+
+  }
+
+  .add-users-on-task{
+    font-size:x-small;
+  }
+
+  .add-comment{
+    font-size:x-small;
+  }
+
+  .comments{
+  }
+
+  .commentCard{
+    border: 1px solid green;
+    border-radius: 10px;
+    background-color: #DDFFE7;
+
   }

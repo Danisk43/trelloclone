@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     
         <link href="/css/dashboard-styles.css" rel="stylesheet">
-
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <title>Taskit</title>
 </head>
@@ -56,7 +56,7 @@
         </ul>
         
     </div>
-    <div class="green-task list-group">
+    <div class="green-task list-group p-3">
         
     </div>
 </div>
@@ -64,18 +64,6 @@
 
 
 
-    <div class="container ms-0">
-        <div class="row">
-            <div class="column">
-                <h1>Projects</h1>
-                <div id="message">
-                </div>
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Add New Project
-                </button>
-                <br>
-                <br>
 
                 <!-- AddModal -->
 
@@ -101,9 +89,9 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
+                                <button type="button" class="btn btn-outline-secondary"
                                     data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary new_project">Save</button>
+                                <button type="button" class="btn btn-success new_project">Save</button>
                             </div>
                         </div>
                     </div>
@@ -133,9 +121,9 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
+                                <button type="button" class="btn btn-outline-secondary"
                                     data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary save_edit_project">Edit</button>
+                                <button type="button" class="btn btn-success save_edit_project">Edit</button>
                             </div>
                         </div>
                     </div>
@@ -156,9 +144,9 @@
                                 <h4>Project will be deleted permanently, do you still want to proceed?</h4>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
+                                <button type="button" class="btn btn-outline-secondary"
                                     data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary delete_project_btn">Delete</button>
+                                <button type="button" class="btn btn-danger delete_project_btn">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -169,19 +157,21 @@
                 <div class="modal fade" id="TaskModal"tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
+                        <div class="modal-content p-3">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="TaskModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <div class="d-flex flex-row justify-content-between">
-                                <div class="task-modal-body">
+                            <div class="container">
+                                <div class="row">
+                                <div class="task-modal-body col-8">
 
                                 </div>
-                                <div class="comments">
+                                <div class="comments p-3 col-4">
 
                                 </div>
+                            </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary"
@@ -192,27 +182,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-row">
-                    <div class="list-group projects-list">
-                        <!-- <a href="#" class="list-group-item list-group-item-action active">
-                        Cras justo odio
-                    </a> -->
-
-                    </div>
-                    <div class="task-type">
-                        <div class="list-group tasks-list">
-
-
-                        </div>
-                    </div>
-                    <div class="task-details">
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
+                
 
     <!-- Optional JavaScript; choose one of the two! -->
 
@@ -222,9 +192,14 @@
     </script>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"
         integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
         $(document).ready(function() {
             fetchProjects();
+
+            $('.js-example-basic-single').select2();
+
 
             function fetchProjects() {
                 $.ajax({
@@ -232,19 +207,7 @@
                     url: "/project",
                     dataType: "json",
                     success: function(response) {
-                        $('.projects-list').html("")
-                        $.each(response.projects, function(key, item) {
-                            $('.projects-list').append(
-                                '  <div class="d-flex flex-row" data-id="' + item.id + '">\
-                                    <div class="list-group-item list-group-item-action show_tasks" id="edit' + item.id +
-                                '"data-value="' + item.id + '" style="width:200px"><h3>' +
-                                item.name + '</h3></div>\
-                                    <button class="btn btn-primary btn-sm edit_project" value="' + item.id + '">Edit</button>\
-                                    <button class="btn btn-danger btn-sm delete_project" id="' + item.id + '"value="' +
-                                item.id + '">Delete</button>\
-                                    </div>'
-                            );
-                        });
+                        $('.project-sidebar').html("")
                         $.each(response.projects, function(key, item) {
                             $('.project-sidebar').append(`
                                 <li class="d-flex justify-content-between show_tasks" id="edit${item.id}" data-value=${item.id} data-id=${item.id}>
@@ -271,14 +234,17 @@
             $(document).on('click', '.delete_task', function(e) {
                 e.preventDefault();
                 var task_id = $(this).val();
-                console.log(task_id)
+                // console.log(task_id)
                 $.ajax({
                     type: "DELETE",
                     url: "/api/project/task/" + task_id,
                     dataType: "json",
                     success: function(response) {
-                        console.log(response, $('#' + task_id));
+                        console.log(response.statusId);
                         if (response.status == 200) {
+                            if(response.statusId){
+                                $(`.status${response.statusId}`).remove();
+                            }
                             $('#' + task_id).remove();
                             alert("Task deleted successfully!")
                         }
@@ -403,8 +369,7 @@
                         if (response.status == 200) {
                             $('.project-sidebar').append(`
                                 <li class="d-flex justify-content-between show_tasks" id="edit${response.id}" data-value=${response.id} data-id=${response.id}>
-                                    <a href="#" class="nav-link link-dark">
-                                        <svg class="bi me-2" width="16" height="16"></svg>
+                                    <a href="#" class="nav-link link-dark ps-1">
                                    <span id="changename${response.id}">${response.name}</span>
                                   </a>
                                   <div class="mt-2">
@@ -451,37 +416,20 @@
                     data: data,
                     dataType: "json",
                     success: function(response) {
-                        $('.tasks-list').html("");
-                        $.each(response, function(key, item) {
-                            $('.tasks-list').append('<h5>' + item.type + '</h5>')
-                            $.each(item.tasks, function(key, item) {
-
-
-                                $('.tasks-list').append(
-                                    '<div class="d-flex flex-row" id="' +
-                                    item.id + '">\
-                                <div class="list-group-item list-group-item-action">\
-                                <h6>' + item.title + '</h6>\
-                                <p>' + item.description + '</p>\
-                                </div>\
-                                <button class="btn btn-primary btn-sm view_task" value="' + item.id +
-                                    '" data-project="' + project_id + '">View</button>\
-                                <button class="btn btn-danger btn-sm delete_task" value="' + item.id + '">Delete</button>\
-                        </div>');
-                            });
-                        })
 
                         $('.green-task').html("");
                         $.each(response, function (key, item) { 
-                             $('.green-task').append(`<h5 class="statush ps-3 pe-3">${item.type}</h5>`)
+                            if(item.tasks.length!=0){
+                                // console.log(item.tasks);
+                             $('.green-task').append(`<h5 class="statush ps-3 pe-3 status${item.id}">${item.type}</h5>`)
                              $.each(item.tasks,function(key,item){
                                 $('.green-task').append(
                                     `
                                     
-                                    <div class="d-flex flex-row justify-content-between ps-3 mb-2 task-card" id=${item.id}>
+                                    <div class="d-flex flex-row justify-content-between ps-3 mb-2 pt-2 task-card" id=${item.id}>
                                         <div class="task-hover view_task" data-value=${item.id} data-project=${project_id}>
                                             <h6>${item.title}</h6>
-                                            <p>${item.description}</p>
+                                            <p class="mb-2">${item.description}</p>
                                         </div>
                                         <div class="align-self-center">
                                         <button class="delete_task me-5" value=${item.id}>
@@ -494,6 +442,7 @@
                                     `
                                 )
                              })
+                            }
                         });
                     }
                 });
@@ -517,14 +466,22 @@
                         <h6>Attachments<h6>
                         <p>${response.task.attachment}</p>
                         <br>
+                        <div class="d-flex flex-direction-column"
                         <p class="assigned-users">Assigned Users</p>
-
                         <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle add-users-on-task" data-task="${response.task.id}" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                            Add New User
+                        <button class="btn btn-success dropdown-toggle add-users-on-task m-0 ms-3 p-1" data-task="${response.task.id}" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            Add User
                         </button>
                         <ul class="dropdown-menu users-list" aria-labelledby="dropdownMenuButton1">
                         </ul>
+                        </div>
+
+                        <select class="js-example-basic-single" name="state">
+                        <option value="AL">Alabama</option>
+    
+                        <option value="WY">Wyoming</option>
+</select>
+                        
                         </div>
 
                         `)
@@ -534,10 +491,10 @@
                         var task_id = response.task.id;
                         $.each(response.task.users, function(key, item) {
                             $('.task-modal-body').append(
-                                `<div class=${item.id}user><p >${item.first_name}</p>
-                            <button class="btn btn-danger btn-sm remove_user_from_task" value=${item.id}>Remove User</button></div>`)
+                                `<div class="${item.id}user d-flex flex-row justify-content-between" style="width:150px;"><p class="m-0">${item.first_name}</p>
+                            <button class="btn-outline-danger btn-sm remove_user_from_task" data-task="${task_id}user" value=${item.id}><i class="bi bi-x-lg"></i></button></div>`)
                         });
-                        $('.remove_user_from_task').data('task', `${task_id}user`);
+                        
 
                     }
                 });
@@ -548,9 +505,13 @@
                     success: function(response) {
                         $.each(response.comments, function(key, item) {
                             $('.comments').append(`
-                        <p>${item.description}</p>
-                        <p>by ${item.first_name}</p>
-                        <p>${item.created_at}</p>
+                            <div class="commentCard p-2 m-1">
+                            <div class="d-flex flex-direction-column justify-content-between"
+                            <p class="mb-0 pb-0">${item.first_name}</p>
+                            <p class="mb-0 pb-0">${item.created_at.slice(11,16)+" "+item.created_at.slice(0,10)}</p>
+                            </div>
+                            <p class="mb-1">${item.description}</p>
+                            </div>
                         `)
                         });
                     }
@@ -565,11 +526,12 @@
 
                 //     });
 
-                $('.comments').html(`<h6>Comments</h6>
-                            <input type="text" id="comment-value">
-                            <button type="button" data-value="${task_id}" class="btn btn-primary add-comment">
+                $('.comments').html(`<h6 class="">Comments</h6><div class="mb-3 input-group">
+                    @csrf
+                            <input type="text" class="form-control" id="comment-value" placeholder="Write Comment">
+                            <button type="button" data-value="${task_id}" class="btn btn-success p-1 add-comment">
                              New Comment
-                </button>`)
+                </button></div>`)
                 $('#TaskModal').modal('show');
 
             });
@@ -581,17 +543,33 @@
                 var data = {
                     "description": $('#comment-value').val()
                 }
-                console.log($('#comment-value').val());
+                // console.log($('#comment-value').val());
                 var task_id = $(this).data("value")
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
                 $.ajax({
-                    type: "POST",
-                    url: "/api/project/task/" + task_id + "/comment",
+                    type: "post",
+                    url: "/project/task/" + task_id + "/comment",
                     data: data,
                     dataType: "json",
                     success: function(response) {
+
+                        
+
+                        // console.log(response);
                         $('.comments').append(`
-                        <p>${value}</p>
-                        <p>
+                        <div class="commentCard p-2 m-1">
+                            <div class="d-flex flex-direction-column justify-content-between"
+                            <p class="mb-0 pb-0">${response.username}</p>
+                            <p class="mb-0 pb-0">${response.time.slice(11,16)+" "+response.time.slice(0,10)}</p>
+                            </div>
+                            <p class="mb-1">${value}</p>
+                            </div>
                         `)
                         $('#comment-value').val("");
                     }
@@ -622,6 +600,7 @@
                     url: `/api/project/task/${task_id}/user`,
                     dataType: "json",
                     success: function(response) {
+                        $('.users-list').html("")
                         $.each(response.users, function(key, item) {
                             $('.users-list').append(`
                              <li><a class="dropdown-item action-add-user" data-task=${task_id} data-userid=${item.id} data-username=${item.first_name}>${item.first_name}</a></li>
@@ -646,8 +625,10 @@
                     dataType: "json",
                     success: function(response) {
                         $('.task-modal-body').append(
-                            `<div class=${userid}user><p >${username}</p>
-                            <button class="btn btn-danger btn-sm remove_user_from_task" value=${userid}>Remove User</button></div>`)
+                            `<div class="${userid}user d-flex flex-row justify-content-between" style="width:150px;"><p class="m-0">${username}</p>
+                            <button class="btn-outline-danger btn-sm remove_user_from_task" data-task="${task_id}user" value=${userid}><i class="bi bi-x-lg"></i></button></div>`)
+                        
+
                     }
                 });
 

@@ -8,10 +8,11 @@ use Illuminate\Http\Request;
 class TaskUserController extends Controller
 {
     public function removeUser($task_id,$user_id){
-        TaskUserService::removeUser($task_id,$user_id);
+        if(TaskUserService::removeUser($task_id,$user_id)){
         return response()->json([
             "status"=>200,
         ]);
+    }
     }
 
     public function addUser($task_id,$user_id){

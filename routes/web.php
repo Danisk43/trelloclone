@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\CommentController;
+
 
 
 /*
@@ -43,3 +45,5 @@ Route::get('/dashboard',[AuthController::class,'dashboardView']);
 
 Route::get('/project',[ProjectController::class,'showAllProjects']);
 Route::post('/project',[ProjectController::class,'addProject']);
+
+Route::post('/project/task/{taskId}/comment',[CommentController::class,'addComment']);
