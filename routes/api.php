@@ -58,7 +58,6 @@ Route::prefix('project')->group(function () {
     
     Route::post('/{projectId}/tasks',[TaskController::class,'showAllTasks']);
     Route::post('/{projectId}/tasks-with-status',[TaskController::class,'showAllTasksWithStatus']);
-    Route::post('/{projectId}/task',[TaskController::class,'addTask']);
     
     
     Route::get('/{projectId}/task/{taskId}', [TaskController::class,'showTask']);
@@ -75,4 +74,5 @@ Route::prefix('project')->group(function () {
     
     Route::get('/task/{taskId}/comment', [CommentController::class,'showComments']);
     
+    Route::get('/{projectId}/task/{taskId}/status',[TaskController::class,'getStatuses']);
 });

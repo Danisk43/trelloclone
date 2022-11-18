@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\Status;
+use App\Models\User;
+
 use Validator;
 use Illuminate\Support\Facades\Session;
 
@@ -47,16 +49,17 @@ class TaskService
         return $status_ids;
     }
 
-    public function addTask($req)
+    public function addTask($req,$id)
     {
-
+        $user_id = Session::get('user_id');
         return $res = (new Task())->fill([
             'title'=>$req->get('title'),
             'description'=>$req->get('description'),
-            'status_id'=>$req->get('status_id'),
-            'attachment'=>$req->get('attachment'),
-            'user_id'=>Session::get('user_id'),
+            'attachment'=>'attachment',
+            'status_id'=>22,
             'project_id'=>$id,
+            'user_id'=>$user_id
+            // 'user_id'=>7
         ])->save();
     }
 
@@ -65,8 +68,15 @@ class TaskService
         // echo $task;
         $users=$task->users;
         // echo $users;
+        $status=$task->status_id;
+        // $status=$status->type;
+        $status=Status::find($status);
+        $status=$status->type;
+        // echo $status;
         return response()->json([
             "task"=>$task,
+            "project_id"=>$project_id,
+            "status"=>$status
             // "users"=>$users
         ]);
 
@@ -92,8 +102,10 @@ class TaskService
         }
 
         // dd($task,$req->get("description"));
-
-        $task->save();
+        $res=$task->save();
+        if($res){
+            return true;
+        }
     }
 
     public function deleteTask($task_id){
@@ -106,6 +118,13 @@ class TaskService
         if(count($numberOfTask)==0){
             return $statusId;
         }
+    }
+
+    public function getStatuses($project_id,$task_id){
+        $status_ids= Project::find($project_id);
+        $status_ids=$status_ids->status;
+        return $status_ids;
+
     }
     
 }

@@ -5,6 +5,8 @@ use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\TaskController;
+
 
 
 
@@ -47,3 +49,5 @@ Route::get('/project',[ProjectController::class,'showAllProjects']);
 Route::post('/project',[ProjectController::class,'addProject']);
 
 Route::post('/project/task/{taskId}/comment',[CommentController::class,'addComment']);
+
+Route::post('/project/{projectId}/task',[TaskController::class,'addTask']);
