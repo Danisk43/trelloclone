@@ -228,38 +228,79 @@
 
     <script>
         $(document).ready(function() {
-            fetchProjects();
+            // fetchProjects();
+
+            $.ajaxPrefilter(async function(options,originalOptions,jqXHR){
+                // console.log(originalOptions.url);
+                if(originalOptions.url == 'set-token' || options.refreshRequest == true){
+                    // console.log('object');
+                    return
+                }
+                else{
+                    function parseJwt (token) {
+                        var base64Url = token.split('.')[1];
+                        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                        }).join(''));
+
+                        return JSON.parse(jsonPayload);
+                    }
+                    // console.log(parseJwt(localStorage.getItem('token')).exp,(Date.now()/1000));
+                    if(localStorage.getItem('token')==null||parseJwt(localStorage.getItem('token')).exp<(Date.now()/1000)){
+                        localStorage.removeItem("token");
+                        jqXHR.abort();
+                        let tokenW=await $.ajax({
+                            type: "GET",
+                            refreshRequest:true,
+                            url: "/set-token",
+                            dataType: "json",
+                        });
+                        localStorage.setItem('token', tokenW.jwt);
+                        $.ajax(options)
+                }
+                }
+                }
+            
+            )
+
+            $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('token',localStorage.getItem('token'));
+                }
+            });
 
             $('.js-example-basic-single').select2();
 
 
-            function fetchProjects() {
-                $.ajax({
-                    type: "GET",
-                    url: "/project",
-                    dataType: "json",
-                    success: function(response) {
-                        $('.project-sidebar').html("")
-                        $.each(response.projects, function(key, item) {
-                            $('.project-sidebar').append(`
-                                <li class="d-flex justify-content-between show_tasks" id="edit${item.id}" data-value=${item.id} data-id=${item.id}>
-                                    <a href="#" class="nav-link link-dark ps-1">
-                                   <span id="changename${item.id}">${item.name}</span>
-                                  </a>
-                                  <div class="mt-2">
-                                    <button class="edit_project" value=${item.id}>
-                                      <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button class="delete_project" value=${item.id}>
-                                      <i class="bi bi-trash" ></i>
-                                    </button>
-                                  </div>
-                                </li>
-                                 `)
-                        });
-                    }
-                });
-            }
+            $.ajax({
+                type: "GET",
+                url: "/api/project",
+                dataType: "json",
+                success: function(response) {
+                    $('.project-sidebar').html("")
+                    $.each(response.projects, function(key, item) {
+                        $('.project-sidebar').append(`
+                            <li class="d-flex justify-content-between show_tasks" id="edit${item.id}" data-value=${item.id} data-id=${item.id}>
+                                <a href="#" class="nav-link link-dark ps-1">
+                               <span id="changename${item.id}">${item.name}</span>
+                              </a>
+                              <div class="mt-2">
+                                <button class="edit_project" value=${item.id}>
+                                  <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="delete_project" value=${item.id}>
+                                  <i class="bi bi-trash" ></i>
+                                </button>
+                              </div>
+                            </li>
+                             `)
+                    });
+                }
+            });
+
+            
+
 
 
             
@@ -373,7 +414,7 @@
                 // console.log(data);
                 $.ajax({
                     type: "POST",
-                    url: "/project",
+                    url: "/api/project",
                     data: data,
                     dataType: "json",
                     success: function(response) {
@@ -599,7 +640,7 @@
 
                 $.ajax({
                     type: "post",
-                    url: "/project/task/" + task_id + "/comment",
+                    url: "/api/project/task/" + task_id + "/comment",
                     data: data,
                     dataType: "json",
                     success: function(response) {
@@ -814,7 +855,7 @@
                 
                 $.ajax({
                     type: "POST",
-                    url: `/project/${project_id}/task`,
+                    url: `/api/project/${project_id}/task`,
                     data: data,
                     dataType: "json",
                     success: function (response) {
@@ -842,6 +883,8 @@
                     }
                 });
             });
+
+            
 
 });
             

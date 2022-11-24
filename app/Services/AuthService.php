@@ -64,8 +64,11 @@ class AuthService
 
     public function login($req){
         $credentials = $req->only('email', 'password');
-        if (Auth::attempt($credentials)) {
+        if ($token=Auth::attempt($credentials)) {
+            // dd($token);
+            Auth::login(Auth::user());
             Session::put("user_id",Auth::user()->id);
+            // dd(Auth::user());
             return true;
         }
   

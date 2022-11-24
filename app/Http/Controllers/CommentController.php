@@ -8,6 +8,8 @@ use App\Models\user;
 use Illuminate\Support\Facades\Session;
 use App\Services\CommentService;
 use Validator;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 
 
@@ -25,20 +27,16 @@ class CommentController extends Controller
             return response()->json($validator->errors(), 401);
         }
 
-        // $res = (new Comment())->fill([
-        //     'description'=>$req->get('description'),
-        //     // 'user_id'=>Session::get('user_id'),
-        //     'user_id'=>6,
-        //     'task_id'=>$task_id,
-        //     ])->save();
-
+        $token = $req->header('token');
+        $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
+        // dd($payload->userid->id);
         $res=Comment::create([
             'description'=>$req->get('description'),
-            'user_id'=>Session::get('user_id'),
+            'user_id'=>$payload->userid->id,
             'task_id'=>$task_id
         ]);
         // $res=$res->id;
-        $username=User::find(Session::get('user_id'));
+        $username=User::find($payload->userid->id);
         // $username=User::find();
         $username=$username->first_name;
 

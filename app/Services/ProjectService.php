@@ -9,19 +9,18 @@ use App\Models\ProjectUser;
 
 use Validator;
 use Illuminate\Support\Facades\Session;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 
 class ProjectService
 {
-    public function showAllProjects(){
-            // dd(session()->all());
-        // return User::find(Session::get('user_id'))->projects();
-        // dd( User::find(1)->projects());
-        // $project=[User::class,'projects'];
-        // dd($project);
-        // $projects = User::find();
-        // dd(session()->all());
-        $projects = User::find(Session::get('user_id'));
+    public function showAllProjects($req){
+
+        $token = $req->header('token');
+        $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
+        // dd($payload);
+        $projects = User::find($payload->userid->id);
 
         // $projects=$projects->projects->pluck('name');
         $projects=$projects->projects;
@@ -34,11 +33,12 @@ class ProjectService
 
     public function addProject($req)
     {
-        // dd(Session::all());
-        $user_id=Session::get('user_id');
+        // $user_id=Session::get('user_id');
+        $token = $req->header('token');
+        $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
         $res = (new Project())->fill([
             'name'=>$req->get('name'),
-            'owner_id'=>$user_id,
+            'owner_id'=>$payload->userid->id,
             // 'owner_id'=>'1',
         ])->save();
         $project_id=Project::where('name',$req->get('name'))->first();
@@ -46,7 +46,7 @@ class ProjectService
         $new=(new ProjectUser())->fill([
             'project_id'=>$project_id->id,
             // 'user_id'=>'1'
-            'user_id'=>$user_id,
+            'user_id'=>$payload->userid->id,
         ])->save();
     }
 

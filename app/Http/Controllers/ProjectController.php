@@ -11,8 +11,8 @@ use Validator;
 class ProjectController extends Controller
 {
     //
-   public function showAllProjects(){
-        return ProjectService::showAllProjects();
+   public function showAllProjects(Request $req){
+        return ProjectService::showAllProjects($req);
     }
 
     public function addProject(Request $req)

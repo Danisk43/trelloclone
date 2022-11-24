@@ -40,16 +40,15 @@ Route::get('/',function(){
     print_r($users);
 });
 
-
-
-
-
+Route::post('/verify-token/{token}',[AuthController::class,'verifyToken']);
 
 
 
 Route::prefix('project')->group(function () {
     
     
+    Route::get('/',[ProjectController::class,'showAllProjects']);
+    Route::post('/',[ProjectController::class,'addProject']);
     
     Route::get('/{projectId}',[ProjectController::class,'showProject']);
     Route::patch('/{projectId}',[ProjectController::class,'updateProject']);
@@ -61,6 +60,7 @@ Route::prefix('project')->group(function () {
     
     
     Route::get('/{projectId}/task/{taskId}', [TaskController::class,'showTask']);
+    Route::post('/{projectId}/task',[TaskController::class,'addTask']);
     Route::patch('/{projectId}/task/{taskId}',[TaskController::class,'updateTask']);
     Route::delete('/task/{taskId}',[TaskController::class,'deleteTask']);
     
@@ -73,6 +73,7 @@ Route::prefix('project')->group(function () {
     
     
     Route::get('/task/{taskId}/comment', [CommentController::class,'showComments']);
+    Route::post('/task/{taskId}/comment',[CommentController::class,'addComment']);  
     
     Route::get('/{projectId}/task/{taskId}/status',[TaskController::class,'getStatuses']);
 });

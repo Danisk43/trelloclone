@@ -25,16 +25,18 @@ Route::get('/',function(){
 });
 
 Route::get('/register',[AuthController::class,'registerView']);
-Route::get('login',[AuthController::class,'loginView']);
+Route::get('/login',[AuthController::class,'loginView']);
 
 Route::post('/register',[AuthController::class,'register']);
-Route::post('/login',[AuthController::class,'login'])->name('login.custom');
+Route::post('/login',[AuthController::class,'login']);
+
 
 Route::post('/forgot-password',[AuthController::class,'forgotPassword']);
 Route::post('/change-password',[AuthController::class,'changePassword']);
 
 Route::get('/logout',[AuthController::class,'logout']);
 
+Route::get('/set-token',[AuthController::class,'setToken']);
 
 
 Route::get('forgot-password',[AuthController::class,'forgotPasswordView']);
@@ -45,9 +47,5 @@ Route::get('/verify',[AuthController::class,'verify']);
 
 Route::get('/dashboard',[AuthController::class,'dashboardView']);
 
-Route::get('/project',[ProjectController::class,'showAllProjects']);
-Route::post('/project',[ProjectController::class,'addProject']);
 
-Route::post('/project/task/{taskId}/comment',[CommentController::class,'addComment']);
 
-Route::post('/project/{projectId}/task',[TaskController::class,'addTask']);

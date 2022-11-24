@@ -13,12 +13,20 @@ use Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon; 
 use Illuminate\Support\Facades\Auth;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 
 
 
 class AuthController extends Controller
 {
+
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api', ['except' => ['login','loginView','dashboardView','register','logout']]);
+    // }
+
     public function register(Request $req){
         // echo $req;
         // print_r($req->all());
@@ -45,7 +53,7 @@ class AuthController extends Controller
     }
 
     
-    
+
     public function login(Request $req){
         // echo $req;
         $validator = Validator::make($req->all(),[
@@ -58,7 +66,9 @@ class AuthController extends Controller
         }
 
         if(AuthService::login($req)){
-            return redirect("/dashboard")->withSuccess('Signed in');
+            $token=$this->setToken();
+            // dd(JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256')));
+            return redirect("/dashboard");
         }
         else{
             return redirect("login")->withFailure('Login details are not valid');
@@ -119,7 +129,7 @@ class AuthController extends Controller
     }
 
     public function logout(){
-        Auth::logout();
+        // Auth::logout();
         session()->flush();
         return redirect('login');
     }
@@ -130,4 +140,39 @@ class AuthController extends Controller
         }
         return redirect("login")->withSuccess('Please login first');
     }
+
+    public function setToken(){
+        $issuedAt = time();
+        $expirationTime = $issuedAt + 3600;
+        $user=Auth::user();
+        // dd($user);
+        $payload = array(
+        'userid' => $user,
+        'iat' => $issuedAt,
+        'exp' => $expirationTime
+        );
+        // dd($payload);
+        $key = env('JWT_SECRET');
+        $alg = 'HS256';
+        $jwt = JWT::encode($payload, $key, $alg);
+        // return $jwt;
+        return response()->json([
+            "status"=>200,
+            "jwt"=>$jwt,
+            "user"=>$user
+        ]);
+    }
+
+    public function verifyToken($token){
+        $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
+        // dd($payload);
+        if($payload->exp<time()){
+        return redirect("login")->withFailure('Timeout! Please login again');
+        }
+        return response()->json([
+            "status"=>200,
+            "payload"=>$payload
+        ]);
+    }
+
 }

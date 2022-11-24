@@ -7,6 +7,8 @@ use App\Models\Task;
 use App\Models\Status;
 use App\Services\TaskService;
 use Validator;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 
 class TaskController extends Controller
@@ -29,7 +31,8 @@ class TaskController extends Controller
             return response()->json($validator->errors(), 401);
         }
         // $user_id = Session::get('user_id');
-
+        $token = $req->header('token');
+        $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
         $res=Task::create([
             'title'=>$req->get('title'),
             'description'=>$req->get('description'),
@@ -37,7 +40,7 @@ class TaskController extends Controller
             'status_id'=>22,
             'project_id'=>$id,
             // 'user_id'=>$user_id
-            'user_id'=>7
+            'user_id'=>$payload->userid->id
         ]);
             return response()->json([
                 "status"=>200,
