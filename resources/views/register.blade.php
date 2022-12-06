@@ -1,10 +1,10 @@
     @extends('layout')
 
     @section('main')
-        
+
     <title>Register</title>
 
-    
+
     <div class="container d-flex flex-column" style="height:100vh">
         <div class="outer pt-5">
             <h1 class="logo">Taskit</h1>
@@ -19,10 +19,10 @@
             <div class="col-4">
                 <div class="flash-message">
                     @if (Session::has('success'))
-                        <p class="alert alert-success">{{ Session::get('success') }}</p>
+                        <p class="alert alert-success text-center">{{ Session::get('success') }}</p>
                     @endif
                     @if (Session::has('failure'))
-                        <p class="alert alert-danger">{{ Session::get('failure') }}</p>
+                        <p class="alert alert-danger text-center">{{ Session::get('failure') }}</p>
                     @endif
                 </div>
                 <div class="card">
@@ -34,37 +34,37 @@
                             @csrf
                                 <div class="col-md-6">
                                     <label for=""><i class="bi bi-pen me-1"></i>First Name</label>
-                                    <input type="text" name="first_name" class="form-control"
+                                    <input type="text" required name="first_name" class="form-control"
                                         placeholder="Enter first name" value="{{ old('first_name') }}">
                                         <span class="text-danger text-md"
                                             >{{ $errors->first('first_name') }}</span>
                                 </div>
                                 <div class="col-md-6">
                                     <label for=""><i class="bi bi-pen me-1"></i>Last Name</label>
-                                    <input type="text" name="last_name" class="form-control"
+                                    <input type="text" required name="last_name" class="form-control"
                                         placeholder="Enter last name" value="{{ old('last_name') }}">
                                         <span class="text-danger text-md"
                                         >{{ $errors->first('last_name') }}</span>
                                 </div>
-                                
+
 
                                 <div class="col-md-12">
                                     <label for=""><i class="bi bi-envelope me-1"></i>Email</label>
-                                    <input type="email" name="email" class="form-control" placeholder="Enter email">
+                                    <input type="email" required name="email" class="form-control" placeholder="Enter email">
                                     <span
                                     class="text-danger text-md">{{ $errors->first('email') }}</span>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label for=""><i class="bi bi-key me-1"></i>Password</label>
-                                    <input type="password" name="password" class="form-control" id="psw"
+                                    <input type="password" required name="password" class="form-control" id="psw"
                                         placeholder="Enter password">
                                     <span
                                     class="text-danger text-md">{{ $errors->first('password') }}</span>
                                 </div>
                                 <div class="col-md-6">
                                     <label for=""><i class="bi bi-key me-1"></i>Confirm Password</label>
-                                    <input type="password" class="form-control" id="cpsw"
+                                    <input type="password" required class="form-control" id="cpsw"
                                         placeholder="Confirm Password" name="password_confirmation">
                                     </div>
                                     <span>Use 8 or more characters with a mix of letters, numbers & symbols</span>
@@ -72,7 +72,7 @@
                                     class="text-danger text-md">{{ $errors->first('password_confirmation') }}</span>
 
                                 <button class="btn btn-success form-control" type="submit">Register</button>
-                          
+
                         </form>
                     </div>
                 </div>
@@ -121,4 +121,4 @@
     </script>
 
     @endsection
-    
+

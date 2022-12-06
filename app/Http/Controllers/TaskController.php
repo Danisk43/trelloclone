@@ -28,7 +28,10 @@ class TaskController extends Controller
             'description' => 'required|max:100',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 401);
+            return response()->json([
+                "status"=>400,
+                "message"=>$validator->messages()
+            ]);
         }
         // $user_id = Session::get('user_id');
         $token = $req->header('token');
@@ -49,7 +52,7 @@ class TaskController extends Controller
                 "id"=>$res->id,
                 "project_id"=>$id
             ]);
-        
+
     }
 
     public function showTask($project_id,$task_id){
@@ -57,6 +60,16 @@ class TaskController extends Controller
     }
 
     public function updateTask(Request $req,$project_id,$task_id){
+        $validator = Validator::make($req->all(), [
+            'title' => 'required|max:20',
+            'description' => 'required|max:100',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status"=>400,
+                "message"=>$validator->messages()
+            ]);
+        }
         $task=Task::find($task_id);
         $prev_status=$task->status_id;
         $numberOfTaskOnPrevStatus=Task::where('status_id',$prev_status)->where('project_id',$project_id)->get();
@@ -67,6 +80,7 @@ class TaskController extends Controller
             $deletePrevStatus=false;
         }
         if(TaskService::updateTask($req,$project_id,$task_id)){
+
             $task=Task::find($task_id);
             $statusId=$task->status_id;
             $status=Status::find($statusId);
@@ -114,5 +128,9 @@ class TaskController extends Controller
             "statusIds"=>$statusIds
         ]);
     }
-    
+
+    public function searchTask(Request $req,$id){
+        return TaskService::searchTask($req,$id);
+    }
+
 }

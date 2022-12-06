@@ -15,13 +15,14 @@ use Illuminate\Support\Facades\Session;
 class TaskService
 {
     public function showAllTasks($id){
-        $project = Project::find($id);	
+        $project = Project::find($id);
         // $projects=$projects->projects->pluck('name');
         $project=$project[0]->tasks;
         // $status= Task::find($tasks->id)
 
         return response()->json([
             "tasks"=>$project,
+            "status"=>200
         ]);
     }
 
@@ -46,19 +47,26 @@ class TaskService
             // dd($users_list);
         }
         // dd($status_ids);
-        return $status_ids;
+        // return $status_ids;
+        return response()->json([
+            "result"=>$status_ids,
+            "status"=>200
+            // "users"=>$users
+        ]);
     }
 
     public function addTask($req,$id)
     {
-        $user_id = Session::get('user_id');
+        // $user_id = Session::get('user_id');
+        $token = $req->header('token');
+        $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
         return $res = (new Task())->fill([
             'title'=>$req->get('title'),
             'description'=>$req->get('description'),
             'attachment'=>'attachment',
             'status_id'=>22,
             'project_id'=>$id,
-            'user_id'=>$user_id
+            'user_id'=>$payload->userid->id
             // 'user_id'=>7
         ])->save();
     }
@@ -76,7 +84,8 @@ class TaskService
         return response()->json([
             "task"=>$task,
             "project_id"=>$project_id,
-            "status"=>$status
+            "taskstatus"=>$status,
+            "status"=>200
             // "users"=>$users
         ]);
 
@@ -126,5 +135,30 @@ class TaskService
         return $status_ids;
 
     }
-    
+
+    public function searchTask($req,$id){
+        $query=$req->get('search-input');
+        // dd($query);
+        if($query==null){
+        $status_ids= Status::where('project_id',$id)->get();
+        foreach($status_ids as &$s){
+            $s->tasks=Task::where('status_id',$s->id)->where('project_id',$id)->get();
+        }
+        return response()->json([
+            "result"=>$status_ids,
+            "status"=>200
+        ]);
+        }
+        else{
+        $status_ids= Status::where('project_id',$id)->get();
+        foreach($status_ids as &$s){
+            $s->tasks=Task::where(function ($q)use($s,$id){$q->where('status_id',$s->id)->where('project_id',$id);})->where(function ($q)use($query){$q->where('title', 'LIKE', "%{$query}%")->orWhere('description', 'LIKE', "%{$query}%");})->get();
+        }
+        return response()->json([
+            "result"=>$status_ids,
+            "status"=>200
+        ]);
+        }
+    }
+
 }

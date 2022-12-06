@@ -8,7 +8,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProjectUserController;
 use App\Http\Controllers\TaskUserController;
-
+use App\Models\User;
 use App\Http\Controllers\AuthController;
 
 
@@ -45,35 +45,40 @@ Route::post('/verify-token/{token}',[AuthController::class,'verifyToken']);
 
 
 Route::prefix('project')->group(function () {
-    
-    
+
+
     Route::get('/',[ProjectController::class,'showAllProjects']);
     Route::post('/',[ProjectController::class,'addProject']);
-    
+
     Route::get('/{projectId}',[ProjectController::class,'showProject']);
     Route::patch('/{projectId}',[ProjectController::class,'updateProject']);
     Route::delete('/{projectId}',[ProjectController::class,'deleteProject']);
-    
-    
+
+    Route::post('/{projectId}/share',[ProjectController::class,'shareProject']);
+
+
     Route::post('/{projectId}/tasks',[TaskController::class,'showAllTasks']);
     Route::post('/{projectId}/tasks-with-status',[TaskController::class,'showAllTasksWithStatus']);
-    
-    
+
+
     Route::get('/{projectId}/task/{taskId}', [TaskController::class,'showTask']);
     Route::post('/{projectId}/task',[TaskController::class,'addTask']);
     Route::patch('/{projectId}/task/{taskId}',[TaskController::class,'updateTask']);
     Route::delete('/task/{taskId}',[TaskController::class,'deleteTask']);
-    
-    
-    
+
+
+
     Route::get('/task/{taskId}/user',[TaskUserController::class,'showUsers']);
     Route::get('/task/{taskId}/user/{userId}',[TaskUserController::class,'addUser']);
     Route::delete('task/{taskId}/user/{userId}',[TaskUserController::class,'removeUser']);
-    
-    
-    
+
+
+
     Route::get('/task/{taskId}/comment', [CommentController::class,'showComments']);
-    Route::post('/task/{taskId}/comment',[CommentController::class,'addComment']);  
-    
+    Route::post('/task/{taskId}/comment',[CommentController::class,'addComment']);
+
     Route::get('/{projectId}/task/{taskId}/status',[TaskController::class,'getStatuses']);
+
+    Route::post('/{projectId}/task/search',[TaskController::class,'searchTask']);
+
 });

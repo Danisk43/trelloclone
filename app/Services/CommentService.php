@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Session;
 
 class CommentService
 {
-    public function showComments($id){        
+    public function showComments($id){
         $comments=Comment::where('task_id',$id)->get();
         // $temp = json_decode($comments);
         foreach($comments as &$c){
@@ -24,6 +24,7 @@ class CommentService
         // $comments = json_encode($temp);
         return response()->json([
             "comments"=>$comments,
+            "status"=>200
         ]);
     }
 }

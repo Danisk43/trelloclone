@@ -28,6 +28,7 @@ class ProjectService
 
         return response()->json([
             "projects"=>$projects,
+            "status"=>200
         ]);
     }
 
@@ -52,7 +53,7 @@ class ProjectService
 
     public function showProject($id){
         // return Project::find($id);
-       
+
     }
 
     public function updateProject($req,$id){
@@ -73,5 +74,15 @@ class ProjectService
             return false;
         }
 
+    }
+
+    public function shareProject($req,$id){
+        $user_id=User::where('email',$req->get('email'))->first()->id;
+        // echo $user_id;
+        $new=(new ProjectUser())->fill([
+            'project_id'=>$id,
+            // 'user_id'=>'1'
+            'user_id'=>$user_id,
+        ])->save();
     }
 }

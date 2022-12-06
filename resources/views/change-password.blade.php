@@ -11,7 +11,7 @@
       <h1 class="logo">Taskit</h1>
       <div class="upper-right">
       <p class="up-para me-4">Don't have an account?</p>
-      
+
       <a href="/register"> <button class="upper-btn btn btn-success form-control">Register</button></a>
       </div>
       </div>
@@ -19,10 +19,10 @@
         <div class="col-4">
           <div class="flash-message">
                       @if(Session::has('success'))
-                          <p class="alert alert-success">{{Session::get('success')}}</p>
+                          <p class="alert alert-success text-center">{{Session::get('success')}}</p>
                       @endif
                       @if(Session::has('failure'))
-                      <p class="alert alert-danger">{{Session::get('failure')}}</p>
+                      <p class="alert alert-danger text-center">{{Session::get('failure')}}</p>
                       @endif
               </div>
           <div class="card">
@@ -33,14 +33,14 @@
                 @csrf
                 <div class="form-group">
                   <label for=""><i class="bi bi-key me-1"></i>Password</label>
-                  
-                  <input type="password" name="password" placeholder="Enter password" id="psw" class="form-control" >
+
+                  <input type="password" required name="password" placeholder="Enter password" id="psw" class="form-control" >
                   <span class="text-danger text-md">{{ $errors->first('password') }}</span>
 
                 </div>
                 <div class="form-group">
                     <label for=""><i class="bi bi-key me-1"></i>Confirm Password</label>
-                    <input type="password" class="form-control" placeholder="Confirm password" id="cpsw" name="password_confirmation" >
+                    <input type="password" required class="form-control" placeholder="Confirm password" id="cpsw" name="password_confirmation" >
                     <span id="ce" class="text-danger text-md">{{ $errors->first('password_confirmation') }}</span>
                   </div>
                   <input type="hidden" value="{{$token}}" name="token">

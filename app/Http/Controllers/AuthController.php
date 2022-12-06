@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\ProjectUser;
 use Illuminate\Support\Facades\Validator;
 use App\Services\AuthService;
 use App\Http\Requests\Auth\LoginRequest;
@@ -11,7 +12,7 @@ use App\Mail\RegisterMail;
 use Illuminate\Support\Facades\Mail;
 use Hash;
 use Illuminate\Support\Str;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -42,7 +43,7 @@ class AuthController extends Controller
             // dd($validator->messages());
             return redirect('register')->withErrors($validator);
         }
-        
+
         if(AuthService::register($req)){
             return redirect('register')->withSuccess('Your account has been created. Please check email for verification link.');
         }
@@ -52,9 +53,11 @@ class AuthController extends Controller
 
     }
 
-    
+
 
     public function login(Request $req){
+
+        // ProjectUser::where('user_id',)
         // echo $req;
         $validator = Validator::make($req->all(),[
             'email' => 'required|email|exists:users',
@@ -129,7 +132,7 @@ class AuthController extends Controller
     }
 
     public function logout(){
-        // Auth::logout();
+        Auth::logout();
         session()->flush();
         return redirect('login');
     }

@@ -7,7 +7,7 @@ use App\Models\Comment;
 use App\Models\user;
 use Illuminate\Support\Facades\Session;
 use App\Services\CommentService;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -24,7 +24,10 @@ class CommentController extends Controller
             'description' => 'required|max:100',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 401);
+            return response()->json([
+                "status"=>400,
+                "message"=>$validator->messages()
+            ]);
         }
 
         $token = $req->header('token');
