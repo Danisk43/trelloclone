@@ -9,6 +9,8 @@ use App\Services\TaskService;
 use Validator;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use App\Models\Attachment;
+
 
 
 class TaskController extends Controller
@@ -34,23 +36,26 @@ class TaskController extends Controller
             ]);
         }
         // $user_id = Session::get('user_id');
-        $token = $req->header('token');
-        $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
+
+        $status=Status::where('project_id',$id)->where('type','OPEN')->get('id')->first();
+        // echo $status->id;
         $res=Task::create([
             'title'=>$req->get('title'),
             'description'=>$req->get('description'),
             'attachment'=>'attachment',
-            'status_id'=>22,
+            'status_id'=>$status->id,
             'project_id'=>$id,
             // 'user_id'=>$user_id
-            'user_id'=>$payload->userid->id
+            'user_id'=>$req->payload->userid->id
         ]);
+
             return response()->json([
                 "status"=>200,
                 "title"=>$req->get('title'),
                 "description"=>$req->get('description'),
                 "id"=>$res->id,
-                "project_id"=>$id
+                "project_id"=>$id,
+                "status_id"=>$status->id
             ]);
 
     }
@@ -122,8 +127,8 @@ class TaskController extends Controller
         ]);
     }
 
-    public function getStatuses($project_id,$task_id){
-        $statusIds=TaskService::getStatuses($project_id,$task_id);
+    public function getStatuses($project_id){
+        $statusIds=TaskService::getStatuses($project_id);
         return response()->json([
             "statusIds"=>$statusIds
         ]);
@@ -132,5 +137,78 @@ class TaskController extends Controller
     public function searchTask(Request $req,$id){
         return TaskService::searchTask($req,$id);
     }
+
+    // public function fileUpload(Request $req,$id){
+
+    //     $fileName = time().'.'.$req->file->extension();
+    //     $req->file->move(public_path('uploads'), $fileName);
+    //     $task=Task::find($id);
+    //     $task->attachment=$fileName;
+    //     $task->save();
+    //     return response()->json([
+    //         "status"=>200,
+    //         "filename"=>$fileName,
+    //     ]);
+    //     // dd($task);
+    // }
+
+    public function fileUpload(Request $req,$id){
+        // dd($req->files);
+
+        foreach($req->files as $key => $file)
+            {
+                // dd($file);
+                $res=array();
+                $i=0;
+                foreach($file as $f){
+                // echo($f);
+                $fileName = time().'.'.rand(1,100).'.'.$f->getClientOriginalExtension();
+                $f->move(public_path('uploads'), $fileName);
+                $path=Attachment::create([
+                    'path'=>$fileName,
+                    'user_id'=>$req->payload->userid->id,
+                    'task_id'=>$id
+                ]);
+                $res[$i]=$path;
+
+                $i++;
+                }
+            }
+        return response()->json([
+            "status"=>200,
+            "filename"=>$res,
+            "username"=>$req->payload->userid->first_name
+        ]);
+    }
+
+    public function fileDownload($task_id,$id){
+        $file_name=Attachment::find($id)->path;
+        // dd($file_name);
+        return response()->download('uploads/'.$file_name);
+    }
+
+    public function filterTask(Request $req,$id){
+        // dd($req);
+        $filter=$req->statusIds;
+        $filter=json_decode($filter[0]);
+        $status_ids= Status::where('project_id',$id)->where(function($q)use($filter){$q->where('id',$filter[0]);for($f=1;$f<count($filter);$f++){$q->orWhere('id',$filter[$f]);}})->get();
+        // dd($status_ids);
+        foreach($status_ids as &$s){
+            $s->tasks=Task::where('status_id',$s->id)->where('project_id',$id)->get();
+        }
+        return response()->json([
+            "status"=>200,
+            "result"=>$status_ids
+        ]);
+    }
+
+    public function showMoreTasks($project_id,$status_id,$offset){
+        $result=TaskService::showMoreTasks($project_id,$status_id,$offset);
+        return response()->json([
+            "status"=>200,
+            "result"=>$result
+        ]);
+    }
+
 
 }

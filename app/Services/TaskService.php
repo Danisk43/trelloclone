@@ -7,9 +7,10 @@ use App\Models\Task;
 use App\Models\Project;
 use App\Models\Status;
 use App\Models\User;
-
+use App\Models\Attachment;
 use Validator;
 use Illuminate\Support\Facades\Session;
+
 
 
 class TaskService
@@ -30,7 +31,7 @@ class TaskService
         $status_ids= Status::where('project_id',$id)->get();
         // echo $status_ids;
         foreach($status_ids as &$s){
-            $s->tasks=Task::where('status_id',$s->id)->where('project_id',$id)->get();
+            $s->tasks=Task::where('status_id',$s->id)->where('project_id',$id)->offset(0)->limit(1)->get();
             // foreach($s->tasks as &$t){
                 // echo $t;
                 // $users=Task::find($t->id);
@@ -58,15 +59,18 @@ class TaskService
     public function addTask($req,$id)
     {
         // $user_id = Session::get('user_id');
-        $token = $req->header('token');
-        $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
+        // $token = $req->header('token');
+        // $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
+        // $status=Status::where('project_id',$id)->where('type','OPEN')->id;
+        // echo $status;
+        // return;
         return $res = (new Task())->fill([
             'title'=>$req->get('title'),
             'description'=>$req->get('description'),
             'attachment'=>'attachment',
             'status_id'=>22,
             'project_id'=>$id,
-            'user_id'=>$payload->userid->id
+            'user_id'=>$req->payload->userid->id
             // 'user_id'=>7
         ])->save();
     }
@@ -80,13 +84,24 @@ class TaskService
         // $status=$status->type;
         $status=Status::find($status);
         $status=$status->type;
+        $files=Attachment::where('task_id',$task_id)->get();
+        // dd(gettype($files));
+        $usernames=array();
+        $i=0;
+        foreach($files as $f){
+            $name=User::find($f->user_id);
+            $usernames[$i]=$name->first_name;
+            $i++;
+        }
+        // echo $usernames;
         // echo $status;
         return response()->json([
             "task"=>$task,
             "project_id"=>$project_id,
             "taskstatus"=>$status,
-            "status"=>200
-            // "users"=>$users
+            "status"=>200,
+            "attachments"=>$files,
+            "usernames"=>$usernames
         ]);
 
 
@@ -129,7 +144,7 @@ class TaskService
         }
     }
 
-    public function getStatuses($project_id,$task_id){
+    public function getStatuses($project_id){
         $status_ids= Project::find($project_id);
         $status_ids=$status_ids->status;
         return $status_ids;
@@ -159,6 +174,12 @@ class TaskService
             "status"=>200
         ]);
         }
+    }
+
+    public function showMoreTasks($project_id,$status_id,$offset){
+        $status=Status::find($status_id);
+        $tasks=Task::where('status_id',$status_id)->offset($offset)->limit(1)->get();
+        return $tasks;
     }
 
 }

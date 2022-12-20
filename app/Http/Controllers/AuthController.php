@@ -16,9 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-
-
-
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
@@ -34,8 +32,13 @@ class AuthController extends Controller
         $validator = Validator::make($req->all(),[
             'first_name' => 'required|max:20',
             'last_name' => 'required|max:20',
-            'email' => 'required|max:50|unique:users',
-            'password' => 'required|confirmed',
+            'email' => 'required|max:50|email|unique:users',
+            'password' => ['required', 'confirmed', Password::min(8)
+            ->mixedCase()
+            ->letters()
+            ->numbers()
+            ->symbols(),
+                ],
             'password_confirmation' => 'required'
 
         ]);
@@ -60,7 +63,7 @@ class AuthController extends Controller
         // ProjectUser::where('user_id',)
         // echo $req;
         $validator = Validator::make($req->all(),[
-            'email' => 'required|email|exists:users',
+            'email' => 'required|max:50|email|exists:users',
             'password' => 'required'
         ]);
         if ($validator->fails()) {
@@ -95,7 +98,12 @@ class AuthController extends Controller
 
     public function changePassword(Request $request){
         $request->validate([
-            'password' => 'required|confirmed',
+            'password' => ['required', 'confirmed', Password::min(8)
+            ->mixedCase()
+            ->letters()
+            ->numbers()
+            ->symbols(),
+                ],
             'password_confirmation' => 'required'
         ]);
        if(AuthService::changePassword($request)){

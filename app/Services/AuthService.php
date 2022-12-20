@@ -10,10 +10,10 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RegisterMail;
 use App\Mail\ResetPasswordMail;
-use DB; 
+use DB;
 use Hash;
 use Illuminate\Support\Str;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 
 
 
@@ -25,7 +25,7 @@ class AuthService
             'first_name'=>$req->get('first_name'),
             'last_name'=>$req->get('last_name'),
             'email'=>$req->get('email'),
-            'password'=>bcrypt($req->get('password')),
+            'password'=>Hash::make($req->get('password')),
         ])->save();
         $res=User::where('email',$req->get('email'))->get()->first();
             $data = [
@@ -71,7 +71,7 @@ class AuthService
             // dd(Auth::user());
             return true;
         }
-  
+
         return false;
     }
 
@@ -86,8 +86,8 @@ class AuthService
 
         $token = Str::random(64);
         DB::table('password_resets')->insert([
-            'email' => $req->email, 
-            'token' => $token, 
+            'email' => $req->email,
+            'token' => $token,
             'created_at' => Carbon::now()
           ]);
         $email = $req->email;
@@ -103,7 +103,7 @@ class AuthService
         //     'password'=>$req->get('password'),
         // ])->save();
         // dd($request);
-         
+
         // dd($request);
         $updatePassword = DB::table('password_resets')
                             ->where([
@@ -111,7 +111,7 @@ class AuthService
                             ])
                             ->first();
         if(!$updatePassword){
-            
+
         }
         $email=$updatePassword->email;
         $user = User::where('email', $email)
@@ -120,5 +120,5 @@ class AuthService
         DB::table('password_resets')->where(['email'=> $email])->delete();
         return true;
     }
-    
+
 }

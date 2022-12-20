@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Services\ProjectService;
 use Illuminate\Support\Facades\Validator;
-
-
+use Illuminate\Validation\Rule;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class ProjectController extends Controller
 {
@@ -18,9 +19,8 @@ class ProjectController extends Controller
 
     public function addProject(Request $req)
     {
-        // dd($req);
         $validator = Validator::make($req->all(), [
-            'name' => 'required|max:20',
+            'name' => ['required','max:20',Rule::unique('projects')->where(function ($query) use($req){return $query->where('owner_id', $req->payload->userid->id);})]
         ]);
         if ($validator->fails()) {
         return response()->json([
@@ -28,21 +28,21 @@ class ProjectController extends Controller
             "message"=>$validator->messages()
         ]);
     }
-        $checkIfNameExists=Project::where('name',$req->get('name'))->first();
-        // dd($checkIfNameExists);
-        if($checkIfNameExists!=null){
-            return response()->json([
-                "status"=>403,
-                "message"=>"A Project with this name already exists, please assign a different name"
-            ]);
-        }
-       ProjectService::addProject($req);
-       $id=Project::where('name',$req->get('name'))->first();
+        // $checkIfNameExists=Project::where('name',$req->get('name'))->first();
+        // // dd($checkIfNameExists);
+        // if($checkIfNameExists!=null){
+        //     return response()->json([
+        //         "status"=>403,
+        //         "message"=>"A Project with this name already exists, please assign a different name"
+        //     ]);
+        // }
+       $response = ProjectService::addProject($req);
+    //    echo $response;
        return response()->json([
         "status"=>200,
         "message"=>"Project created successfully",
-        "id"=>$id->id,
-        "name"=>$id->name,
+        "id"=>$response['id'],
+        "name"=>$response['name'],
        ]);
     }
 
@@ -52,7 +52,7 @@ class ProjectController extends Controller
 
     public function updateProject(Request $req,$id){
         $validator = Validator::make($req->all(), [
-            'name' => 'required|max:20',
+            'name' => ['required','max:20',Rule::unique('projects')->where(function ($query) use($req){return $query->where('owner_id', $req->payload->userid->id);})]
         ]);
         if ($validator->fails()) {
             // dd($validator->messages());
@@ -62,13 +62,13 @@ class ProjectController extends Controller
                 "message"=>$validator->messages()
             ]);
         }
-        if(ProjectService::updateProject($req,$id)){
+        ProjectService::updateProject($req,$id);
 
             return response()->json([
                 "status"=>200,
                 "message"=>"Project updated successfully"
             ]);
-        }
+
     }
 
     public function deleteProject($id){

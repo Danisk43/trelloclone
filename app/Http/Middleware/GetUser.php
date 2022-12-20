@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class EnsureTokenIsValid
+class GetUser
 {
     /**
      * Handle an incoming request.
@@ -19,17 +19,8 @@ class EnsureTokenIsValid
     public function handle(Request $request, Closure $next)
     {
         $token = $request->header('token');
-        // dd($token);
         $payload=JWT::decode($token,new Key(env('JWT_SECRET'), 'HS256'));
-        if($payload){
+        $request->request->add(['payload' => $payload]);
         return $next($request);
-        }
-        else{
-            response()->json([
-                "status"=>498,
-                "error"=>"Token is Invalid"
-            ]);
-        }
-
     }
 }

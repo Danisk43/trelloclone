@@ -19,7 +19,7 @@ use App\Http\Controllers\TaskController;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/                  
+*/
 Route::get('/',function(){
     return view('welcome');
 });
@@ -46,6 +46,8 @@ Route::get('change-password/{token}',[AuthController::class,'changePasswordView'
 Route::get('/verify',[AuthController::class,'verify']);
 
 Route::get('/dashboard',[AuthController::class,'dashboardView']);
+
+Route::get('/project/task/{taskId}/{attachmentId}/download-file', [TaskController::class, 'fileDownload'])->name('fileUpload');
 
 
 

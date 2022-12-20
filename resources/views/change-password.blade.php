@@ -60,40 +60,19 @@
       var char=/[^a-zA-Z\d]/g
       var str = document.getElementById("psw").value;
       var cpsw = document.getElementById("cpsw").value;
-      if(!str.match(lower)){
-        document.getElementById("ce").innerText='Password must contain atleast one lowercase character';
-        // e.preventDefault()
+      if (!str.match(lower)||!str.match(upper)||!str.match(num)||!str.match(char)||!(str.length >= 8)) {
+                document.getElementById("ce").innerText = 'Password must be alphanumeric containing atleast one lowercase, one uppercase and one special character and must be of length greater than or equal to 8';
+                // e.preventDefault()
+                return false
+
+        } else if (str != cpsw) {
+            // alert("Passwords don't match");
+            document.getElementById("ce").innerText = "Passwords don't match"
+            return false
+        } else {
+            return true
+        }
         return false
-      }
-      else if(!str.match(upper)){
-        document.getElementById("ce").innerText='Password must contain atleast one uppercase character';
-        // e.preventDefault()
-        return false
-      }
-      else if(!str.match(num)){
-        document.getElementById("ce").innerText='Password must contain atleast one number';
-        // e.preventDefault()
-        return false
-      }
-      else if(!str.match(char)){
-        document.getElementById("ce").innerText='Password must contain atleast one special character';
-        // e.preventDefault()
-        return false
-      }
-      else if(!(str.length>=8)){
-        document.getElementById("ce").innerText='Password length must be greater than or equal to 8';
-        // e.preventDefault()
-        return false
-      }
-      else if(str!=cpsw){
-        // alert("Passwords don't match");
-        document.getElementById("ce").innerText="Passwords don't match"
-        return false
-      }
-      else{
-        return true
-      }
-      return false
     }
     </script>
 

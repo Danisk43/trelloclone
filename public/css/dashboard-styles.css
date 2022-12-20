@@ -32,7 +32,7 @@ body{
     width: 100%;
     margin-top: 56px;
     margin-left:280px;
-    height: 93.3vh;
+    min-height: 93.3vh;
   }
 
   .task-hover{
@@ -76,4 +76,8 @@ body{
     background-color: #DDFFE7;
 
   }
+
+  /* i{
+    border:1px solid green;
+  } */
 
